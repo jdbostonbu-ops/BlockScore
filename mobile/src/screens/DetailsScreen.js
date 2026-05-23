@@ -1,16 +1,23 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useSavedStore } from "../store/savedStore";
+import { getSavedZips, saveZip, removeZip } from "../store/savedStore";
 import { getReportCard } from "../../services/api";
 
 export default function DetailsScreen() {
   const router = useRouter();
   const { zip } = useLocalSearchParams();
-  const saveZip = useSavedStore((state) => state.saveZip);
-  const savedZips = useSavedStore((state) => state.savedZips);
+
   const [reportCard, setReportCard] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [savedZips, setSavedZips] = useState([]);
 
   async function loadDetails() {
     try {
@@ -24,8 +31,24 @@ export default function DetailsScreen() {
     }
   }
 
+  async function loadSaved() {
+    const saved = await getSavedZips();
+    setSavedZips(saved);
+  }
+
+  async function handleSaveZip(selectedZip) {
+    if (savedZips.includes(selectedZip)) {
+      const updated = await removeZip(selectedZip);
+      setSavedZips(updated);
+    } else {
+      const updated = await saveZip(selectedZip);
+      setSavedZips(updated);
+    }
+  }
+
   useEffect(() => {
     loadDetails();
+    loadSaved();
   }, [zip]);
 
   if (loading || !reportCard) {
@@ -54,7 +77,7 @@ export default function DetailsScreen() {
       </View>
       <TouchableOpacity
         style={styles.saveButton}
-        onPress={() => saveZip(reportCard.zip_code)}
+        onPress={() => handleSaveZip(reportCard.zip_code)}
       >
         <Text style={styles.saveButtonText}>
           {savedZips.includes(reportCard.zip_code)

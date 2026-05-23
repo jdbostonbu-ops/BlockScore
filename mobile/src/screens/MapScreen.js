@@ -6,28 +6,11 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  Platform,
 } from "react-native";
-
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
 
 import BottomNav from "../components/BottomNav";
 import { api } from "../../services/api";
-
-const complaintIcon = new L.DivIcon({
-  className: "custom-complaint-marker",
-  html: `<div style="
-    width: 22px;
-    height: 22px;
-    background: #EF4444;
-    border: 3px solid white;
-    border-radius: 50%;
-    box-shadow: 0 4px 10px rgba(0,0,0,.25);
-  "></div>`,
-  iconSize: [22, 22],
-  iconAnchor: [11, 11],
-});
 
 export default function MapScreen() {
   const [pins, setPins] = useState([]);
@@ -55,91 +38,153 @@ export default function MapScreen() {
     loadPins(type);
   }
 
-  return (
-    <View style={styles.page}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.logo}>🗺️ Neighborhood Map</Text>
+return (
+  <View style={styles.page}>
+    <ScrollView contentContainerStyle={styles.content}>
+      <Text style={styles.logo}>🗺️ Neighborhood Map</Text>
 
-        <Text style={styles.subtitle}>
-          Explore complaint density and livability patterns across NYC.
+      <Text style={styles.subtitle}>
+        Explore complaint density and livability patterns across NYC.
+      </Text>
+
+      <View style={styles.filters}>
+        <FilterButton
+          active={category === "noise"}
+          label="Noise"
+          onPress={() => changeCategory("noise")}
+        />
+
+        <FilterButton
+          active={category === "cleanliness"}
+          label="Cleanliness"
+          onPress={() => changeCategory("cleanliness")}
+        />
+
+        <FilterButton
+          active={category === "utilities"}
+          label="Utilities"
+          onPress={() => changeCategory("utilities")}
+        />
+
+        <FilterButton
+          active={category === "infrastructure"}
+          label="Infrastructure"
+          onPress={() => changeCategory("infrastructure")}
+        />
+      </View>
+
+      <View style={styles.mapCard}>
+        {loading ? (
+          <View style={styles.loadingMap}>
+            <ActivityIndicator size="large" color="#6C4DFF" />
+            <Text style={styles.mapText}>
+              Loading map points...
+            </Text>
+          </View>
+        ) : Platform.OS === "web" ? (
+          <View style={styles.webMapWrapper}>
+            <iframe
+              title="NYC OpenStreetMap"
+              src="https://www.openstreetmap.org/export/embed.html?bbox=-74.2591%2C40.4774%2C-73.7004%2C40.9176&layer=mapnik"
+              style={{
+                width: "100%",
+                height: "360px",
+                border: "0",
+                borderRadius: "24px",
+              }}
+            />
+
+            <View style={styles.pinOverlay}>
+              {pins.slice(0, 14).map((pin, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.coolPin,
+                    {
+                      top: getPinTop(index, category),
+                      left: getPinLeft(index, category),
+                    },
+                  ]}
+                >
+                  <Text style={styles.pinText}>
+                    {index + 1}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        ) : (
+          <View style={styles.fakeMap}>
+            <Text style={styles.mapText}>
+              NYC Complaint Density Map
+            </Text>
+
+            {pins.slice(0, 18).map((pin, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.pin,
+                  {
+                    top: getPinTop(index, category),
+                    left: getPinLeft(index, category),
+                  },
+                ]}
+              />
+            ))}
+          </View>
+        )}
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>
+          Active {category} complaint zones
         </Text>
 
-        <View style={styles.filters}>
-          <FilterButton active={category === "noise"} label="Noise" onPress={() => changeCategory("noise")} />
-          <FilterButton active={category === "cleanliness"} label="Cleanliness" onPress={() => changeCategory("cleanliness")} />
-          <FilterButton active={category === "utilities"} label="Utilities" onPress={() => changeCategory("utilities")} />
-          <FilterButton active={category === "infrastructure"} label="Infrastructure" onPress={() => changeCategory("infrastructure")} />
-        </View>
+        <Text style={styles.count}>
+          {pins.length} map points loaded
+        </Text>
 
-        <View style={styles.mapCard}>
-          {loading ? (
-            <View style={styles.loadingMap}>
-              <ActivityIndicator size="large" color="#6C4DFF" />
-              <Text style={styles.mapText}>Loading map points...</Text>
+        {pins.slice(0, 5).map((item, index) => (
+          <View style={styles.row} key={index}>
+            <Text style={styles.rank}>
+              {index + 1}
+            </Text>
+
+            <View style={{ flex: 1 }}>
+              <Text style={styles.zip}>
+                ZIP {item.incident_zip}
+              </Text>
+
+              <Text style={styles.borough}>
+                {item.borough}
+              </Text>
             </View>
-          ) : (
-            <View style={styles.leafletWrapper}>
-              <MapContainer
-                center={[40.7128, -74.006]}
-                zoom={11}
-                scrollWheelZoom={true}
-                style={{
-                  height: 360,
-                  width: "100%",
-                  borderRadius: 24,
-                  overflow: "hidden",
-                }}
-              >
-                <TileLayer
-                  attribution='&copy; OpenStreetMap contributors'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
 
-                {pins.slice(0, 30).map((pin, index) => (
-                  <Marker
-                    key={index}
-                    icon={complaintIcon}
-                    position={[
-                      40.7128 + ((index % 7) * 0.018) - 0.06,
-                      -74.006 + ((index % 6) * 0.018) - 0.05,
-                    ]}
-                  >
-                    <Popup>
-                      <strong>ZIP {pin.incident_zip}</strong>
-                      <br />
-                      {pin.borough}
-                      <br />
-                      {pin.total} {category} complaints
-                    </Popup>
-                  </Marker>
-                ))}
-              </MapContainer>
-            </View>
-          )}
-        </View>
+            <Text style={styles.total}>
+              {item.total}
+            </Text>
+          </View>
+        ))}
+      </View>
+    </ScrollView>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Active {category} complaint zones</Text>
-          <Text style={styles.count}>{pins.length} map points loaded</Text>
+    <BottomNav />
+  </View>
+);
+}
 
-          {pins.slice(0, 5).map((item, index) => (
-            <View style={styles.row} key={index}>
-              <Text style={styles.rank}>{index + 1}</Text>
+function getPinTop(index, category) {
+  if (category === "noise") return 30 + ((index * 73) % 260);
+  if (category === "cleanliness") return 45 + ((index * 91) % 240);
+  if (category === "utilities") return 60 + ((index * 47) % 250);
+  return 35 + ((index * 119) % 255);
+}
 
-              <View style={{ flex: 1 }}>
-                <Text style={styles.zip}>ZIP {item.incident_zip}</Text>
-                <Text style={styles.borough}>{item.borough}</Text>
-              </View>
-
-              <Text style={styles.total}>{item.total}</Text>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-
-      <BottomNav />
-    </View>
-  );
+function getPinLeft(index, category) {
+  if (category === "noise") return 30 + ((index * 127) % 330);
+  if (category === "cleanliness") return 50 + ((index * 83) % 310);
+  if (category === "utilities") return 70 + ((index * 111) % 280);
+  return 40 + ((index * 59) % 330);
 }
 
 function FilterButton({ label, active, onPress }) {
@@ -156,10 +201,7 @@ function FilterButton({ label, active, onPress }) {
 }
 
 const styles = StyleSheet.create({
-  page: {
-    flex: 1,
-    backgroundColor: "#F4F1FF",
-  },
+  page: { flex: 1, backgroundColor: "#F4F1FF" },
   content: {
     width: "100%",
     maxWidth: 520,
@@ -211,7 +253,7 @@ const styles = StyleSheet.create({
     shadowRadius: 18,
     elevation: 4,
   },
-  leafletWrapper: {
+  webMapWrapper: {
     height: 360,
     borderRadius: 24,
     overflow: "hidden",
@@ -223,11 +265,29 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  fakeMap: {
+    height: 360,
+    borderRadius: 24,
+    backgroundColor: "#DDEBFF",
+    overflow: "hidden",
+    position: "relative",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   mapText: {
     color: "#24105A",
     fontWeight: "900",
     fontSize: 18,
     marginTop: 12,
+  },
+  pin: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: "#EF4444",
+    position: "absolute",
+    borderWidth: 3,
+    borderColor: "#FFFFFF",
   },
   card: {
     backgroundColor: "#FFFFFF",
@@ -272,4 +332,33 @@ const styles = StyleSheet.create({
     color: "#24105A",
     fontWeight: "900",
   },
+  pinOverlay: {
+  position: "absolute",
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  pointerEvents: "none",
+},
+
+coolPin: {
+  position: "absolute",
+  width: 34,
+  height: 34,
+  borderRadius: 17,
+  backgroundColor: "#6C4DFF",
+  borderWidth: 3,
+  borderColor: "#FFFFFF",
+  alignItems: "center",
+  justifyContent: "center",
+  shadowColor: "#000",
+  shadowOpacity: 0.25,
+  shadowRadius: 8,
+},
+
+pinText: {
+  color: "#FFFFFF",
+  fontWeight: "900",
+  fontSize: 12,
+},
 });

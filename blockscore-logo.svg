@@ -1,0 +1,26 @@
+<svg width="420" height="84" viewBox="0 0 420 84" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BlockScore logo">
+  <title>BlockScore</title>
+  <desc>BlockScore logo: a deep purple tile with three city buildings with lit windows, beside the BlockScore wordmark and tagline</desc>
+
+  <!-- Icon: rounded tile with three buildings + lit windows -->
+  <g transform="translate(0,2)">
+    <rect x="0" y="0" width="80" height="80" rx="18" fill="#24105A"/>
+    <rect x="15" y="42" width="15" height="26" rx="2" fill="#7F77DD"/>
+    <rect x="33" y="28" width="15" height="40" rx="2" fill="#AFA9EC"/>
+    <rect x="52" y="17" width="15" height="51" rx="2" fill="#6C4DFF"/>
+    <g fill="#FFD86B">
+      <rect x="18" y="47" width="3.5" height="4.5"/><rect x="24" y="47" width="3.5" height="4.5"/>
+      <rect x="18" y="55" width="3.5" height="4.5"/><rect x="24" y="55" width="3.5" height="4.5"/>
+      <rect x="36" y="33" width="3.5" height="4.5"/><rect x="42" y="33" width="3.5" height="4.5"/>
+      <rect x="36" y="41" width="3.5" height="4.5"/><rect x="42" y="41" width="3.5" height="4.5"/>
+      <rect x="36" y="49" width="3.5" height="4.5"/><rect x="42" y="49" width="3.5" height="4.5"/>
+      <rect x="55" y="22" width="3.5" height="4.5"/><rect x="61" y="22" width="3.5" height="4.5"/>
+      <rect x="55" y="30" width="3.5" height="4.5"/><rect x="61" y="30" width="3.5" height="4.5"/>
+      <rect x="55" y="38" width="3.5" height="4.5"/><rect x="61" y="38" width="3.5" height="4.5"/>
+    </g>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="100" y="40" font-family="Helvetica, Arial, sans-serif" font-size="34" font-weight="800" fill="#24105A">Block<tspan fill="#6C4DFF">Score</tspan></text>
+  <text x="101" y="62" font-family="Helvetica, Arial, sans-serif" font-size="12" font-weight="600" letter-spacing="1.8" fill="#888780">LIVE SMARTER. CHOOSE BETTER.</text>
+</svg>
