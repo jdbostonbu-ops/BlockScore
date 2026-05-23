@@ -17,7 +17,7 @@
 Jacqueline Delgado
 GitHub: [YOUR-PROFILE-LINK](https://github.com/jdbostonbu-ops)
 
-Repository: [YOUR-REPO-LINK](https://blockscore.onrender.com)
+Repository: [YOUR-REPO-LINK](https://astounding-bubblegum-1457e5.netlify.app/)
 
 ## About
 
@@ -30,6 +30,15 @@ BlockScore is a full-stack mobile app that helps people choose where to live in 
 - Category breakdowns: noise, cleanliness, utilities, infrastructure
 - Top complaint types ranked with visual bars
 - Built on real NYC 311 complaint data
+
+## 🌐 Browser & Device Compatibility
+
+| Browser / Device | Status | Performance Notes |
+| --- | --- | --- |
+| **Google Chrome** | ✅ Tested | Full support — game flow, Build Lab editor, AI integration, Resume Builder. |
+| **Apple Safari (macOS)** | ✅ Tested | All features functional including PDF export and Edit Resume window. |
+| **iPhone (iOS Safari)** | ✅ Tested | Touch interactions, smooth scroll, and AI features fully functional. |
+
 
 ## Tech Stack
 
@@ -90,3 +99,11 @@ Press `w` to open the app in a web browser, or scan the QR code with the Expo Go
 
 BlockScore is a working prototype. The backend, database, and core mobile screens are functional and connected end to end. It currently runs locally for development.
 
+⭐ Love this project? Give it a star and explore the other deployed projects in this portfolio.
+
+
+<p align="center">
+
+<img src="blockscore-logo.svg" width="380" alt="BlockScore logo" />
+
+</p>
