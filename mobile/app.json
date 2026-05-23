@@ -21,7 +21,7 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/tablcons/favicon-48x48.png"
+      "favicon": "./assets/images/favicon-48x48.png"
     },
     "plugins": [
       "expo-router",
