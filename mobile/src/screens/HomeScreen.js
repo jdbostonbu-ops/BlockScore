@@ -123,7 +123,7 @@ export default function HomeScreen() {
             onPress={() => router.push(`/details?zip=${reportCard.zip_code}`)}
           >
             <View style={styles.scoreInfo}>
-              <Text style={styles.sectionLabel}>Neighborhood Report Card</Text>
+              <Text style={styles.sectionLabel}>NYC Borough Report Card</Text>
               <Text style={styles.zip}>ZIP {reportCard.zip_code}</Text>
               <Text style={styles.borough}>{reportCard.borough}</Text>
 
