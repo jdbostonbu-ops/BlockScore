@@ -1,0 +1,28 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BlockScore">
+  <title>BlockScore</title>
+  <!-- Rounded purple tile filling the full canvas -->
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="#24105A"/>
+  <!-- Three city buildings, scaled up to fill the tile for legibility at small sizes -->
+  <g>
+    <!-- short building (left) -->
+    <rect x="96"  y="270" width="96" height="166" rx="12" fill="#7F77DD"/>
+    <!-- medium building (center) -->
+    <rect x="208" y="180" width="96" height="256" rx="12" fill="#AFA9EC"/>
+    <!-- tall building (right) -->
+    <rect x="320" y="110" width="96" height="326" rx="12" fill="#6C4DFF"/>
+  </g>
+  <!-- Lit windows -->
+  <g fill="#FFD86B">
+    <!-- left building: 2 cols x 2 rows -->
+    <rect x="116" y="300" width="22" height="29" rx="3"/><rect x="150" y="300" width="22" height="29" rx="3"/>
+    <rect x="116" y="350" width="22" height="29" rx="3"/><rect x="150" y="350" width="22" height="29" rx="3"/>
+    <!-- center building: 2 cols x 3 rows -->
+    <rect x="228" y="212" width="22" height="29" rx="3"/><rect x="262" y="212" width="22" height="29" rx="3"/>
+    <rect x="228" y="262" width="22" height="29" rx="3"/><rect x="262" y="262" width="22" height="29" rx="3"/>
+    <rect x="228" y="312" width="22" height="29" rx="3"/><rect x="262" y="312" width="22" height="29" rx="3"/>
+    <!-- right building: 2 cols x 3 rows -->
+    <rect x="340" y="146" width="22" height="29" rx="3"/><rect x="374" y="146" width="22" height="29" rx="3"/>
+    <rect x="340" y="196" width="22" height="29" rx="3"/><rect x="374" y="196" width="22" height="29" rx="3"/>
+    <rect x="340" y="246" width="22" height="29" rx="3"/><rect x="374" y="246" width="22" height="29" rx="3"/>
+  </g>
+</svg>
