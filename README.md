@@ -10,7 +10,7 @@ Neighborhood report cards for New York City, powered by real NYC 311 complaint d
 
 <br />
 
-<img src="assets/demo.gif" width="600" alt="BlockScore demo" />
+<img src="BlockScore.gif" width="600" alt="BlockScore demo" />
 
 <br />
 
