@@ -6,12 +6,28 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  Platform,
 } from "react-native";
 
-import MapView, { Marker } from "react-native-maps";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
 import BottomNav from "../components/BottomNav";
 import { api } from "../../services/api";
+
+const complaintIcon = new L.DivIcon({
+  className: "custom-complaint-marker",
+  html: `<div style="
+    width: 22px;
+    height: 22px;
+    background: #EF4444;
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0,0,0,.25);
+  "></div>`,
+  iconSize: [22, 22],
+  iconAnchor: [11, 11],
+});
 
 export default function MapScreen() {
   const [pins, setPins] = useState([]);
@@ -61,45 +77,44 @@ export default function MapScreen() {
               <ActivityIndicator size="large" color="#6C4DFF" />
               <Text style={styles.mapText}>Loading map points...</Text>
             </View>
-          ) : Platform.OS === "web" ? (
-            <View style={styles.fakeMap}>
-              <Text style={styles.mapText}>NYC Complaint Density Map</Text>
-
-              {pins.slice(0, 18).map((pin, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.pin,
-                    {
-                      top: getPinTop(index, category),
-                      left: getPinLeft(index, category),
-                    },
-                  ]}
-                />
-              ))}
-            </View>
           ) : (
-            <MapView
-              style={styles.realMap}
-              initialRegion={{
-                latitude: 40.7128,
-                longitude: -74.006,
-                latitudeDelta: 0.25,
-                longitudeDelta: 0.25,
-              }}
-            >
-              {pins.slice(0, 30).map((pin, index) => (
-                <Marker
-                  key={index}
-                  coordinate={{
-                    latitude: 40.7128 + ((index % 5) * 0.02),
-                    longitude: -74.006 + ((index % 6) * 0.02),
-                  }}
-                  title={`ZIP ${pin.incident_zip}`}
-                  description={`${pin.total} ${category} complaints`}
+            <View style={styles.leafletWrapper}>
+              <MapContainer
+                center={[40.7128, -74.006]}
+                zoom={11}
+                scrollWheelZoom={true}
+                style={{
+                  height: 360,
+                  width: "100%",
+                  borderRadius: 24,
+                  overflow: "hidden",
+                }}
+              >
+                <TileLayer
+                  attribution='&copy; OpenStreetMap contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-              ))}
-            </MapView>
+
+                {pins.slice(0, 30).map((pin, index) => (
+                  <Marker
+                    key={index}
+                    icon={complaintIcon}
+                    position={[
+                      40.7128 + ((index % 7) * 0.018) - 0.06,
+                      -74.006 + ((index % 6) * 0.018) - 0.05,
+                    ]}
+                  >
+                    <Popup>
+                      <strong>ZIP {pin.incident_zip}</strong>
+                      <br />
+                      {pin.borough}
+                      <br />
+                      {pin.total} {category} complaints
+                    </Popup>
+                  </Marker>
+                ))}
+              </MapContainer>
+            </View>
           )}
         </View>
 
@@ -125,20 +140,6 @@ export default function MapScreen() {
       <BottomNav />
     </View>
   );
-}
-
-function getPinTop(index, category) {
-  if (category === "noise") return 30 + ((index * 73) % 260);
-  if (category === "cleanliness") return 45 + ((index * 91) % 240);
-  if (category === "utilities") return 60 + ((index * 47) % 250);
-  return 35 + ((index * 119) % 255);
-}
-
-function getPinLeft(index, category) {
-  if (category === "noise") return 30 + ((index * 127) % 330);
-  if (category === "cleanliness") return 50 + ((index * 83) % 310);
-  if (category === "utilities") return 70 + ((index * 111) % 280);
-  return 40 + ((index * 59) % 330);
 }
 
 function FilterButton({ label, active, onPress }) {
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
     shadowRadius: 18,
     elevation: 4,
   },
-  realMap: {
+  leafletWrapper: {
     height: 360,
     borderRadius: 24,
     overflow: "hidden",
@@ -222,28 +223,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  fakeMap: {
-    height: 360,
-    borderRadius: 24,
-    backgroundColor: "#DDEBFF",
-    overflow: "hidden",
-    position: "relative",
-    justifyContent: "center",
-    alignItems: "center",
-  },
   mapText: {
     color: "#24105A",
     fontWeight: "900",
     fontSize: 18,
-  },
-  pin: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: "#EF4444",
-    position: "absolute",
-    borderWidth: 3,
-    borderColor: "#FFFFFF",
+    marginTop: 12,
   },
   card: {
     backgroundColor: "#FFFFFF",
