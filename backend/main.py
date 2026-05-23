@@ -1,3 +1,4 @@
+from nyc_open_data import get_live_complaints
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -63,3 +64,7 @@ def get_cleanest(limit: int = Query(10, ge=1, le=50)):
 @app.get("/map/pins")
 def get_map_pins(category: str = "noise", limit: int = Query(500, ge=1, le=2000)):
     return map_pins(category, limit)
+
+@app.get("/live-complaints")
+def live_complaints():
+    return get_live_complaints(50)

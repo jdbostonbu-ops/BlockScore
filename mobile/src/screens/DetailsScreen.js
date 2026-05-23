@@ -11,6 +11,20 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { getSavedZips, saveZip, removeZip } from "../store/savedStore";
 import { getReportCard } from "../../services/api";
 
+function getNeighborhoodRating(score) {
+  const numericScore = Number(score) || 0;
+
+  if (numericScore >= 85) {
+    return { label: "Excellent Area", color: "#22C55E" };
+  }
+
+  if (numericScore >= 70) {
+    return { label: "Moderate Area", color: "#F59E0B" };
+  }
+
+  return { label: "Needs Review", color: "#EF4444" };
+}
+
 export default function DetailsScreen() {
   const router = useRouter();
   const { zip } = useLocalSearchParams();
@@ -18,6 +32,10 @@ export default function DetailsScreen() {
   const [reportCard, setReportCard] = useState(null);
   const [loading, setLoading] = useState(false);
   const [savedZips, setSavedZips] = useState([]);
+
+  const rating = reportCard
+    ? getNeighborhoodRating(reportCard.overall_score)
+    : null;
 
   async function loadDetails() {
     try {
@@ -70,19 +88,31 @@ export default function DetailsScreen() {
         <Text style={styles.title}>ZIP {reportCard.zip_code}</Text>
         <Text style={styles.subtitle}>{reportCard.borough}</Text>
 
+        {rating && (
+          <View
+            style={[
+              styles.ratingBadge,
+              { backgroundColor: rating.color },
+            ]}
+          >
+            <Text style={styles.ratingBadgeText}>
+              {rating.label}
+            </Text>
+          </View>
+        )}
+
         <View style={styles.scoreBadge}>
           <Text style={styles.grade}>{reportCard.overall_grade}</Text>
           <Text style={styles.score}>{reportCard.overall_score} / 100</Text>
         </View>
       </View>
+
       <TouchableOpacity
         style={styles.saveButton}
         onPress={() => handleSaveZip(reportCard.zip_code)}
       >
         <Text style={styles.saveButtonText}>
-          {savedZips.includes(reportCard.zip_code)
-            ? "Saved ✓"
-            : "Save ZIP"}
+          {savedZips.includes(reportCard.zip_code) ? "Saved ✓" : "Save ZIP"}
         </Text>
       </TouchableOpacity>
 
@@ -105,7 +135,9 @@ export default function DetailsScreen() {
             </Text>
           ))
         ) : (
-          <Text style={styles.insight}>No peak-hour noise data found for this ZIP.</Text>
+          <Text style={styles.insight}>
+            No peak-hour noise data found for this ZIP.
+          </Text>
         )}
       </View>
 
@@ -234,4 +266,18 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     paddingVertical: 6,
   },
+  ratingBadge: {
+  alignSelf: "flex-start",
+  paddingHorizontal: 14,
+  paddingVertical: 8,
+  borderRadius: 999,
+  marginTop: 14,
+  },
+
+  ratingBadgeText: {
+  color: "#FFFFFF",
+  fontWeight: "900",
+  fontSize: 13,
+  },
+
 });

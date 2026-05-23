@@ -155,6 +155,7 @@ def cleanest_rankings(limit=10):
 def map_pins(category: str = "noise", limit: int = 500):
     where = "complaint_type LIKE '%Noise%'"
     params = []
+
     if category == "cleanliness":
         where = "complaint_type IN ('Dirty Conditions','Missed Collection','Rodent')"
     elif category == "utilities":
@@ -163,9 +164,17 @@ def map_pins(category: str = "noise", limit: int = 500):
         where = "complaint_type IN ('Derelict Vehicle','Street Condition','Sidewalk Condition','Blocked Driveway')"
 
     params.append(limit)
+
     return fetch_all(
         f"""
-        SELECT unique_key, complaint_type, descriptor, borough, incident_zip, latitude, longitude
+        SELECT 
+            unique_key,
+            complaint_type,
+            descriptor,
+            borough,
+            incident_zip,
+            latitude,
+            longitude
         FROM service_requests
         WHERE latitude IS NOT NULL
           AND longitude IS NOT NULL

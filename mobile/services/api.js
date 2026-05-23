@@ -15,3 +15,11 @@ export async function getTopComplaints() {
   const response = await api.get("/complaints/top");
   return response.data;
 }
+
+export async function getLiveComplaints() {
+  const response = await axios.get(
+    `${API_BASE_URL}/live-complaints`
+  );
+
+  return response.data;
+}

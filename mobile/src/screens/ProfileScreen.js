@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from "expo-router";
+import { getSearchHistory, clearSearchHistory } from "../store/searchHistoryStore";
 import {
   View,
   Text,
@@ -6,20 +8,34 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-
 import BottomNav from "../components/BottomNav";
-import { getSavedZips } from "../store/savedStore";
+import { getSavedZips, removeZip } from "../store/savedStore";
 
 export default function ProfileScreen() {
   const [savedZips, setSavedZips] = useState([]);
+  const [searchHistory, setSearchHistory] = useState([]);
 
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
     loadSaved();
-  }, []);
+  }, [])
+  );
 
   async function loadSaved() {
     const saved = await getSavedZips();
     setSavedZips(saved);
+    const history = await getSearchHistory();
+    setSearchHistory(history);
+  }
+
+  async function handleClearHistory() {
+  const updated = await clearSearchHistory();
+  setSearchHistory(updated);
+  }
+
+  async function handleRemoveZip(zip) {
+    const updated = await removeZip(zip);
+    setSavedZips(updated);
   }
 
   return (
@@ -51,15 +67,45 @@ export default function ProfileScreen() {
               <Text style={styles.emptyText}>No saved ZIP codes yet.</Text>
             ) : (
               savedZips.map((zip) => (
-                <View key={zip} style={styles.savedZip}>
-                  <Text style={styles.savedZipText}>ZIP {zip}</Text>
+                <View key={zip} style={styles.savedZipRow}>
+                  <View style={styles.savedZip}>
+                    <Text style={styles.savedZipText}>ZIP {zip}</Text>
+                  </View>
+
+                  <TouchableOpacity
+                    style={styles.removeButton}
+                    onPress={() => handleRemoveZip(zip)}
+                  >
+                    <Text style={styles.removeButtonText}>Remove</Text>
+                  </TouchableOpacity>
                 </View>
               ))
             )}
           </View>
 
           <Setting icon="⚖️" label="Recent comparisons" value="Coming soon" />
-          <Setting icon="🔎" label="Search history" value="Coming soon" />
+          <View style={styles.historySection}>
+          <Text style={styles.historyTitle}>🔎 Search History</Text>
+
+         {searchHistory.length === 0 ? (
+          <Text style={styles.emptyText}>No searches yet.</Text>
+        ) : (
+          <>
+            {searchHistory.map((zip) => (
+              <View key={zip} style={styles.historyItem}>
+                <Text style={styles.historyText}>ZIP {zip}</Text>
+              </View>
+            ))}
+
+            <TouchableOpacity
+              style={styles.clearButton}
+              onPress={handleClearHistory}
+            >
+              <Text style={styles.clearButtonText}>Clear History</Text>
+            </TouchableOpacity>
+          </>
+        )}
+        </View>
         </View>
 
         <View style={styles.card}>
@@ -193,18 +239,46 @@ const styles = StyleSheet.create({
     color: "#2D136C",
     marginBottom: 12,
   },
+  savedZipRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 10,
+  },
   savedZip: {
+    flex: 1,
     backgroundColor: "#F4F1FF",
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: 14,
-    marginBottom: 10,
   },
   savedZipText: {
     color: "#2D136C",
     fontWeight: "700",
   },
+  removeButton: {
+    backgroundColor: "#FFE8E8",
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+  },
+  removeButtonText: {
+    color: "#EF4444",
+    fontWeight: "900",
+  },
   emptyText: {
     color: "#7B7298",
   },
+  clearButton: {
+  backgroundColor: "#F4F1FF",
+  paddingVertical: 12,
+  borderRadius: 14,
+  alignItems: "center",
+  marginTop: 8,
+},
+
+clearButtonText: {
+  color: "#6C4DFF",
+  fontWeight: "900",
+},
 });
