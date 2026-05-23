@@ -2,12 +2,6 @@
 
 <img src="blockscore-logo.svg" width="380" alt="BlockScore logo" />
 
-# BlockScore
-
-### Live smarter. Choose better.
-
-Neighborhood report cards for New York City, powered by real NYC 311 complaint data.
-
 <br />
 
 <img src="BlockScore.gif" width="400" alt="BlockScore demo" />
@@ -23,7 +17,7 @@ Neighborhood report cards for New York City, powered by real NYC 311 complaint d
 Jacqueline Delgado
 GitHub: [YOUR-PROFILE-LINK](https://github.com/jdbostonbu-ops)
 
-Repository: [YOUR-REPO-LINK](YOUR-REPO-LINK)
+Repository: [YOUR-REPO-LINK](https://blockscore.onrender.com)
 
 ## About
 
